@@ -22,6 +22,7 @@ namespace Oficina.Infrastructure.Context
         public OficinaDbContext(DbContextOptions<OficinaDbContext> options) : base(options) { }
 
         public DbSet<Pessoa> Pessoas { get; set; }
+        public DbSet<Peca> Pecas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

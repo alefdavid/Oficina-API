@@ -30,6 +30,7 @@ builder.Services.AddDbContext<OficinaDbContext>(options => options.UseSqlServer(
 
 //DependencyInjection
 builder.Services.AddTransient<IPessoaRepository, PessoaRepository>();
+builder.Services.AddTransient<IPecaRepository, PecaRepository>();
 
 
 builder.Services.AddControllers();
