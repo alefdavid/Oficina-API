@@ -1,4 +1,4 @@
-﻿using Oficina.Domain.DTO;
+﻿using OficinaOS.Domain.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Oficina.Application.ViewModels
+namespace OficinaOS.Application.ViewModels
 {
     public class PecaModel
     {

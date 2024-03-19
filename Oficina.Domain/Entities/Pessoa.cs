@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Oficina.Domain.Entities
+namespace OficinaOS.Domain.Entities
 {
     public class Pessoa : BaseEntity
     {

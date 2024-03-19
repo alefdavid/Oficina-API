@@ -1,10 +1,10 @@
-﻿using Oficina.Domain.DTO;
-using Oficina.Domain.Entities;
-using Oficina.Domain.Interfaces.Repositories;
-using Oficina.Infrastructure.Context;
+﻿using OficinaOS.Domain.DTO;
+using OficinaOS.Domain.Entities;
+using OficinaOS.Domain.Interfaces.Repositories;
+using OficinaOS.Infrastructure.Context;
 using System.Linq;
 
-namespace Oficina.Infrastructure.Repositories
+namespace OficinaOS.Infrastructure.Repositories
 {
     public class PessoaRepository : IPessoaRepository
     {

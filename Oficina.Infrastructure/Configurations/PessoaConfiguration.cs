@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Oficina.Domain.Entities;
+using OficinaOS.Domain.Entities;
 
-namespace Oficina.Infrastructure.Configurations
+namespace OficinaOS.Infrastructure.Configurations
 {
     public class PessoaConfiguration : IEntityTypeConfiguration<Pessoa>
     {

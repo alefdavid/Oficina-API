@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Oficina.Domain.Communication
+namespace OficinaOS.Domain.Communication
 {
     public class ResponseResult
     {

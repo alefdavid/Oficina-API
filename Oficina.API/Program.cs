@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Oficina.Domain.Interfaces.Repositories;
-using Oficina.Infrastructure.Context;
-using Oficina.Infrastructure.Repositories;
+using OficinaOS.Domain.Interfaces.Repositories;
+using OficinaOS.Infrastructure.Context;
+using OficinaOS.Infrastructure.Repositories;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen(opt =>
 {
     opt.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Oficina.API",
+        Title = "OficinaOS.API",
         Version = "v1",
         Contact = new OpenApiContact
         {

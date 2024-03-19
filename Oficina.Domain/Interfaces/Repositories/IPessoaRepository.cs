@@ -1,12 +1,12 @@
-﻿using Oficina.Domain.DTO;
-using Oficina.Domain.Entities;
+﻿using OficinaOS.Domain.DTO;
+using OficinaOS.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Oficina.Domain.Interfaces.Repositories
+namespace OficinaOS.Domain.Interfaces.Repositories
 {
     public interface IPessoaRepository
     {

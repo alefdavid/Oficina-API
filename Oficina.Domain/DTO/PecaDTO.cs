@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Oficina.Domain.DTO
+namespace OficinaOS.Domain.DTO
 {
     public class PecaDTO
     {

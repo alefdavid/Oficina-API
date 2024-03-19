@@ -1,4 +1,4 @@
-﻿namespace Oficina.API.Responses
+﻿namespace OficinaOS.API.Responses
 {
     public class ErrorResponse
     {

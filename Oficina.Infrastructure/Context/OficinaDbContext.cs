@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Oficina.Domain.Entities;
-using Oficina.Infrastructure.Configurations;
+using OficinaOS.Domain.Entities;
+using OficinaOS.Infrastructure.Configurations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Oficina.Infrastructure.Context
+namespace OficinaOS.Infrastructure.Context
 {
     public class OficinaDbContext : DbContext
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Oficina.API.Responses;
-using Oficina.Domain.Communication;
+using OficinaOS.API.Responses;
+using OficinaOS.Domain.Communication;
 
-namespace Oficina.API.Controllers
+namespace OficinaOS.API.Controllers
 {
     [Controller]
     public class MainController : ControllerBase

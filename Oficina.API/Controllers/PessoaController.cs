@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Oficina.API.Responses;
-using Oficina.Application.ViewModels;
-using Oficina.Domain.DTO;
-using Oficina.Domain.Interfaces.Repositories;
+using OficinaOS.API.Responses;
+using OficinaOS.Application.ViewModels;
+using OficinaOS.Domain.DTO;
+using OficinaOS.Domain.Interfaces.Repositories;
 
-namespace Oficina.API.Controllers
+namespace OficinaOS.API.Controllers
 {
     [ApiController]
     public class PessoaController : MainController
