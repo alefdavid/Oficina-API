@@ -10,9 +10,9 @@ namespace OficinaOS.Infrastructure.Configurations
         {            
             builder.HasAnnotation("Relational:TableName", "pessoa");
 
-            builder.HasKey(x => x.Codigo);
+            builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Codigo)
+            builder.Property(x => x.Id)
                 .HasAnnotation("Relational:ColumnName", "id")
                 .HasConversion<int>()                              
                 .ValueGeneratedOnAdd()

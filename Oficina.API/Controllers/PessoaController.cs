@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OficinaOS.API.Responses;
-using OficinaOS.Application.ViewModels;
 using OficinaOS.Domain.DTO;
+using OficinaOS.Domain.Entities;
 using OficinaOS.Domain.Interfaces.Repositories;
 
 namespace OficinaOS.API.Controllers
@@ -12,19 +13,25 @@ namespace OficinaOS.API.Controllers
     {
         private readonly IPessoaRepository _pessoaRepository;
 
-        public PessoaController(IPessoaRepository pessoaRepository) =>
+        private readonly IMapper _mapper;
+
+        public PessoaController(IPessoaRepository pessoaRepository,
+                                IMapper mapper)
+        {
             _pessoaRepository = pessoaRepository;
+            _mapper = mapper;
+        }
 
         [HttpGet("/api/buscar/pessoa/{id}")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CadastrarPessoaDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PessoaDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
         public async Task<IActionResult> BuscarPessoaId(int id)
         {
             try
             {
-                var retorno = await _pessoaRepository.BuscarPessoaId(id);
+                var retorno = await _pessoaRepository.BuscarPorId(id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -35,41 +42,43 @@ namespace OficinaOS.API.Controllers
             {
                 ShowConsoleError(ex);
 
-                return BadResponse(MensagemErro.ERRO_INESPERADO);
+                return BadResponse(MensagemErro.Erro_Inesperado);
             }
         }
 
         [HttpGet("/api/listar/pessoa")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CadastrarPessoaDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PessoaDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
         public async Task<IActionResult> ListarPessoa()
         {
             try
             {
-                var retorno = await _pessoaRepository.ListarPessoa();
+                var retorno = await _pessoaRepository.Listar();
 
-                if (retorno == null)
+                if (retorno == null || !retorno.Any())
                     return NotFoundResponse();
 
-                return Ok(retorno);
+                var pessoaDto = retorno.Select(p => _mapper.Map<Pessoa, PessoaDTO>(p));
+
+                return Ok(pessoaDto);
             }
             catch (Exception ex)
             {
                 ShowConsoleError(ex);
 
-                return BadResponse(MensagemErro.ERRO_INESPERADO);
+                return BadResponse(MensagemErro.Erro_Inesperado);
             }
         }
 
         [HttpPost("/api/cadastrar/pessoa/")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CadastrarPessoaDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PessoaCadastrarDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> CadastrarPessoa([FromBody] CadastrarPessoaViewModel viewModel)
+        public async Task<IActionResult> CadastrarPessoa([FromBody] PessoaCadastrarDTO pessoaCadastrar)
         {
             try
             {
@@ -83,7 +92,9 @@ namespace OficinaOS.API.Controllers
                     return BadResponse(lista);
                 }
 
-                var retorno = await _pessoaRepository.CadastrarPessoa(viewModel.ConverterDTO());
+                var pessoaCadastrarDto = _mapper.Map<PessoaCadastrarDTO>(pessoaCadastrar);
+
+                var retorno = await _pessoaRepository.Cadastrar(pessoaCadastrarDto);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -95,31 +106,28 @@ namespace OficinaOS.API.Controllers
             {
                 ShowConsoleError(ex);
 
-                return BadResponse(MensagemErro.ERRO_INESPERADO);
+                return BadResponse(MensagemErro.Erro_Inesperado);
             }
         }
 
         [HttpPut("/api/atualizar/pessoa/{id}")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CadastrarPessoaDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PessoaAtualizarDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> AtualizarPessoa(CadastrarPessoaViewModel viewModel, int id)
+        public async Task<IActionResult> AtualizarPessoa(PessoaAtualizarDTO pessoaAtualizar, int id)
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    var lista = ModelState.Where(x => x.Value.ValidationState == ModelValidationState.Invalid)
-                        .SelectMany(item => item.Value.Errors.ToList(), (item, errors) => new { item, errors })
-                        .Select(x => x.errors.ErrorMessage)
-                        .ToList();
+                var buscaPessoa = await _pessoaRepository.BuscarPorId(id);
 
-                    return BadResponse(lista);
-                }
+                if (buscaPessoa == null)
+                    return NotFoundResponse();
 
-                var retorno = await _pessoaRepository.AtualizarPessoa(viewModel.ConverterDTO(), id);
+                var pessoaAtualizarDto = _mapper.Map<PessoaAtualizarDTO>(pessoaAtualizar);
+
+                var retorno = await _pessoaRepository.Atualizar(pessoaAtualizarDto, id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -131,7 +139,7 @@ namespace OficinaOS.API.Controllers
             {
                 ShowConsoleError(ex);
 
-                return BadResponse(MensagemErro.ERRO_INESPERADO);
+                return BadResponse(MensagemErro.Erro_Inesperado);
             }
         }
 
@@ -145,7 +153,7 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pessoaRepository.RemovePessoa(id);
+                var retorno = await _pessoaRepository.Excluir(id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -157,7 +165,7 @@ namespace OficinaOS.API.Controllers
             {
                 ShowConsoleError(ex);
 
-                return BadResponse(MensagemErro.ERRO_INESPERADO);
+                return BadResponse(MensagemErro.Erro_Inesperado);
             }
         }
     }

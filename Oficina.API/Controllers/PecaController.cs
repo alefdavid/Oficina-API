@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OficinaOS.API.Responses;
-using OficinaOS.Application.ViewModels;
 using OficinaOS.Domain.DTO;
 using OficinaOS.Domain.Interfaces.Repositories;
 
@@ -12,8 +12,12 @@ namespace OficinaOS.API.Controllers
     {
         private readonly IPecaRepository _pecaRepository;
 
-        public PecaController(IPecaRepository pecaRepository) =>
+        private readonly IMapper _mapper;
+        public PecaController(IPecaRepository pecaRepository, IMapper mapper)
+        {
             _pecaRepository = pecaRepository;
+            _mapper = mapper;
+        }
 
         [HttpGet("/api/buscar/peca/{id}")]
         [Produces("application/json")]
@@ -24,7 +28,7 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pecaRepository.BuscarPecaId(id);
+                var retorno = await _pecaRepository.BuscarPorId(id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -35,7 +39,7 @@ namespace OficinaOS.API.Controllers
             {
                 ShowConsoleError(ex);
 
-                return BadResponse(MensagemErro.ERRO_INESPERADO);
+                return BadResponse(MensagemErro.Erro_Inesperado);
             }
         }
 
@@ -48,7 +52,7 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pecaRepository.ListarPeca();
+                var retorno = await _pecaRepository.Listar();
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -59,7 +63,7 @@ namespace OficinaOS.API.Controllers
             {
                 ShowConsoleError(ex);
 
-                return BadResponse(MensagemErro.ERRO_INESPERADO);
+                return BadResponse(MensagemErro.Erro_Inesperado);
             }
         }
 
@@ -69,7 +73,7 @@ namespace OficinaOS.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> CadastrarPeca([FromBody] PecaModel model)
+        public async Task<IActionResult> CadastrarPeca([FromBody] PecaDTO pecaDTO)
         {
             try
             {
@@ -83,7 +87,9 @@ namespace OficinaOS.API.Controllers
                     return BadResponse(lista);
                 }
 
-                var retorno = await _pecaRepository.CadastrarPeca(model.ConverterDTO());
+                var pecaCadastrar = _mapper.Map<PecaDTO>(pecaDTO);
+
+                var retorno = await _pecaRepository.Cadastrar(pecaCadastrar);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -95,7 +101,7 @@ namespace OficinaOS.API.Controllers
             {
                 ShowConsoleError(ex);
 
-                return BadResponse(MensagemErro.ERRO_INESPERADO);
+                return BadResponse(MensagemErro.Erro_Inesperado);
             }
         }
 
@@ -105,21 +111,18 @@ namespace OficinaOS.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> AtualizarPeca(PecaModel model, int id)
+        public async Task<IActionResult> AtualizarPeca([FromBody] PecaDTO pecaDTO, int id)
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    var lista = ModelState.Where(x => x.Value.ValidationState == ModelValidationState.Invalid)
-                        .SelectMany(item => item.Value.Errors.ToList(), (item, errors) => new { item, errors })
-                        .Select(x => x.errors.ErrorMessage)
-                        .ToList();
+                var retornoBuscarId = await _pecaRepository.BuscarPorId(id);
 
-                    return BadResponse(lista);
-                }
+                if (retornoBuscarId == null)
+                    return NotFoundResponse();
 
-                var retorno = await _pecaRepository.AtualizarPeca(model.ConverterDTO(), id);
+                var pecaAtualizar = _mapper.Map<PecaDTO>(pecaDTO);
+
+                var retorno = await _pecaRepository.Atualizar(pecaAtualizar, id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -131,7 +134,7 @@ namespace OficinaOS.API.Controllers
             {
                 ShowConsoleError(ex);
 
-                return BadResponse(MensagemErro.ERRO_INESPERADO);
+                return BadResponse(MensagemErro.Erro_Inesperado);
             }
         }
 
@@ -145,7 +148,7 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pecaRepository.RemovePeca(id);
+                var retorno = await _pecaRepository.Excluir(id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -157,7 +160,7 @@ namespace OficinaOS.API.Controllers
             {
                 ShowConsoleError(ex);
 
-                return BadResponse(MensagemErro.ERRO_INESPERADO);
+                return BadResponse(MensagemErro.Erro_Inesperado);
             }
         }
     }

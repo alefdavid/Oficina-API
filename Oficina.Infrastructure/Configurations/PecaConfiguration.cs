@@ -10,9 +10,9 @@ namespace OficinaOS.Infrastructure.Configurations
         {            
             builder.HasAnnotation("Relational:TableName", "peca");
 
-            builder.HasKey(x => x.Codigo);
+            builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Codigo)
+            builder.Property(x => x.Id)
                 .HasAnnotation("Relational:ColumnName", "id")
                 .HasConversion<int>()                              
                 .ValueGeneratedOnAdd()
@@ -35,7 +35,7 @@ namespace OficinaOS.Infrastructure.Configurations
                 .HasMaxLength(100)
                 .IsRequired(true);
 
-            builder.Property(x => x.Valor_unit)
+            builder.Property(x => x.ValorUnitario)
                 .HasAnnotation("Relational:ColumnName", "valor_unit")
                 .HasConversion<decimal>()
                 .HasMaxLength(18)

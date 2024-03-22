@@ -1,102 +1,73 @@
-﻿using OficinaOS.Domain.DTO;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using OficinaOS.Domain.DTO;
 using OficinaOS.Domain.Entities;
 using OficinaOS.Domain.Interfaces.Repositories;
 using OficinaOS.Infrastructure.Context;
-using System.Linq;
 
 namespace OficinaOS.Infrastructure.Repositories
 {
     public class PecaRepository : IPecaRepository
     {
-        private readonly OficinaDbContext _context = new OficinaDbContext();
+        private readonly OficinaDbContext _context;
 
-        public PecaRepository(OficinaDbContext context)
+        private readonly IMapper _mapper;
+
+        public PecaRepository(OficinaDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<PecaDTO> BuscarPecaId(int id)
+        public async Task<Peca> BuscarPorId(int id)
         {
             if (id == null)
-            {
                 throw new Exception();
-            }
+            
+            var peca = _context.Pecas.Where(x => x.Id == id).FirstOrDefault();
 
-            var listaPeca = _context.Pecas.Where(x => x.Codigo == id).FirstOrDefault();
-
-            return new PecaDTO
-            {
-                Descricao = listaPeca.Descricao,
-                Quantidade = listaPeca.Quantidade,
-                Marca = listaPeca.Marca,
-                Valor_unit = listaPeca.Valor_unit
-            };
+            return peca;
         }
 
-        public async Task<IQueryable<PecaDTO>> ListarPeca()
+        public async Task<List<Peca>> Listar()
         {
-            var listaPeca = _context.Pecas;
-
-            var pecaDTO = listaPeca.Select(p => new PecaDTO
-            {
-                Id = p.Codigo,
-                Descricao = p.Descricao,
-                Quantidade = p.Quantidade,
-                Marca = p.Marca,
-                Valor_unit = p.Valor_unit
-            });
-
-            return pecaDTO;
+            return await _context.Pecas.ToListAsync();
         }
 
-        public async Task<PecaDTO> CadastrarPeca(PecaDTO pecaDTO)
+        public async Task<PecaDTO> Cadastrar(PecaDTO pecaCadastrar)
         {
-            if (pecaDTO == null)
-                throw new ArgumentNullException(nameof(pecaDTO));
+            if (pecaCadastrar == null)
+                throw new ArgumentNullException(nameof(pecaCadastrar));
 
-            var entidadePeca = new Peca
-            {
-                Descricao = pecaDTO.Descricao,
-                Quantidade = pecaDTO.Quantidade,
-                Marca = pecaDTO.Marca,
-                Valor_unit = pecaDTO.Valor_unit
-            };
+            var peca = _mapper.Map<PecaDTO, Peca>(pecaCadastrar);
 
-            var retorno = _context.Pecas.Add(entidadePeca).Entity;
+            _context.Pecas.Add(peca);
             await _context.SaveChangesAsync();
 
-            return new PecaDTO
-            {
-                Descricao = retorno.Descricao,
-                Quantidade = retorno.Quantidade,
-                Marca = retorno.Marca,
-                Valor_unit = retorno.Valor_unit
-            };
+            return _mapper.Map<Peca, PecaDTO>(peca);
         }
 
-        public async Task<bool> AtualizarPeca(PecaDTO pecaAtualizar, int id)
+        public async Task<bool> Atualizar(PecaDTO pecaAtualizar, int id)
         {
             if (pecaAtualizar == null)
                 throw new ArgumentNullException(nameof(pecaAtualizar));
 
-            var retornaAtualizarPeca = await _context.Pecas.FindAsync(id);
+            var pecaExistente = await _context.Pecas
+                .FirstOrDefaultAsync(a => a.Id == id);
 
-            if (retornaAtualizarPeca == null)
-                throw new ArgumentNullException($"Não existe: {id}.");
+            if (pecaExistente == null)
+                throw new ArgumentNullException($"Não existe: {pecaExistente}.");
 
-            retornaAtualizarPeca.Descricao = pecaAtualizar.Descricao;
-            retornaAtualizarPeca.Quantidade = pecaAtualizar.Quantidade;
-            retornaAtualizarPeca.Marca = pecaAtualizar.Marca;
-            retornaAtualizarPeca.Valor_unit = pecaAtualizar.Valor_unit;
+            _mapper.Map(pecaAtualizar, pecaExistente);
 
-            _context.Pecas.Update(retornaAtualizarPeca);
+            _context.Pecas.Update(pecaExistente);
 
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<bool> RemovePeca(int id)
+        public async Task<bool> Excluir(int id)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));

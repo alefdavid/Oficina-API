@@ -21,9 +21,7 @@
     {
         private MensagemErro() { }
 
-        public const string ERRO_PARAMETRO_INVALIDO = "O parâmetro informado é inválido";
-        public const string ERRO_CONEXAO_BANCO_DE_DADOS = "Erro de conexão com o banco de dados";
-        public const string ERRO_TIMEOUT = "Timeout";
-        public const string ERRO_INESPERADO = "Erro Inesperado";
+        public const string Erro_Parametro_Invalido = "O parâmetro informado é inválido";      
+        public const string Erro_Inesperado = "Erro Inesperado";
     }
 }

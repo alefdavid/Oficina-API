@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OficinaOS.Domain.DTO
+﻿namespace OficinaOS.Domain.DTO
 {
-    public class CadastrarPessoaDTO
+    public class PessoaCadastrarDTO
     {
-        public int Id { get; set; }
         public string Nome { get; set; }
         public string Email { get; set; }
         public string Cpf { get; set; }

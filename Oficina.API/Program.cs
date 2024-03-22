@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OficinaOS.Domain.Interfaces.Repositories;
 using OficinaOS.Infrastructure.Context;
+using OficinaOS.Infrastructure.Profiles;
 using OficinaOS.Infrastructure.Repositories;
 using System.Reflection;
 
@@ -29,8 +30,12 @@ var connectionString = builder.Configuration.GetConnectionString("BDAccompanyCar
 builder.Services.AddDbContext<OficinaDbContext>(options => options.UseSqlServer(connectionString));
 
 //DependencyInjection
-builder.Services.AddTransient<IPessoaRepository, PessoaRepository>();
-builder.Services.AddTransient<IPecaRepository, PecaRepository>();
+builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
+builder.Services.AddScoped<IPecaRepository, PecaRepository>();
+
+//Mapping
+builder.Services.AddSingleton(AutoMapperConfig.Initialize());
+
 
 
 builder.Services.AddControllers();

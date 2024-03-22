@@ -1,105 +1,73 @@
-﻿using OficinaOS.Domain.DTO;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using OficinaOS.Domain.DTO;
 using OficinaOS.Domain.Entities;
 using OficinaOS.Domain.Interfaces.Repositories;
 using OficinaOS.Infrastructure.Context;
-using System.Linq;
 
 namespace OficinaOS.Infrastructure.Repositories
 {
     public class PessoaRepository : IPessoaRepository
     {
-        private readonly OficinaDbContext _context = new OficinaDbContext();
+        private readonly OficinaDbContext _context;
 
-        public PessoaRepository(OficinaDbContext context)
+        private readonly IMapper _mapper;
+
+        public PessoaRepository(OficinaDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<CadastrarPessoaDTO> BuscarPessoaId(int id)
+        public async Task<Pessoa> BuscarPorId(int id)
         {
             if (id == null)
-            {
                 throw new Exception();
-            }
 
-            var listaPessoa = _context.Pessoas.Where(x => x.Codigo == id).FirstOrDefault();
-
-            return new CadastrarPessoaDTO
-            {
-                Nome = listaPessoa.Nome,
-                Cpf = listaPessoa.Cpf,
-                Email = listaPessoa.Email,
-                Telefone = listaPessoa.Telefone
-            };
-        }
-        public async Task<IQueryable<CadastrarPessoaDTO>> ListarPessoa()
-        {
-            var listaPessoa = _context.Pessoas;
-
-            var pessoaDto = listaPessoa.Select(p => new CadastrarPessoaDTO
-            {
-                Id = p.Codigo,
-                Nome = p.Nome,                
-                Cpf = p.Cpf,
-                Telefone = p.Telefone,
-                Email = p.Email
-            });
-
-            return pessoaDto;
-        }
-
-        public async Task<CadastrarPessoaDTO> CadastrarPessoa(CadastrarPessoaDTO pessoaDTO)
-        {
-            if (pessoaDTO == null)
-                throw new ArgumentNullException(nameof(pessoaDTO));
-
-            var entidadePessoa = new Pessoa
-            {
-                Nome = pessoaDTO.Nome,
-                Cpf = pessoaDTO.Cpf,
-                Telefone = pessoaDTO.Telefone,
-                Email = pessoaDTO.Email,               
-                Senha = pessoaDTO.Senha
+            var pessoa = _context.Pessoas.Where(x => x.Id == id).FirstOrDefault();
                 
-            };
+            return pessoa;
+        }
 
-            var retorno = _context.Pessoas.Add(entidadePessoa).Entity;
+        public async Task<List<Pessoa>> Listar()
+        {
+            return await _context.Pessoas.ToListAsync();
+        }
+
+        public async Task<PessoaCadastrarDTO> Cadastrar(PessoaCadastrarDTO pessoaCadastrar)
+        {
+            if (pessoaCadastrar == null)
+                throw new ArgumentNullException(nameof(pessoaCadastrar));
+
+            var pessoa = _mapper.Map<PessoaCadastrarDTO, Pessoa>(pessoaCadastrar);
+
+            _context.Pessoas.Add(pessoa);
             await _context.SaveChangesAsync();
 
-            return new CadastrarPessoaDTO
-            {
-                Nome = retorno.Nome,
-                Cpf = retorno.Cpf,
-                Telefone = retorno.Telefone,
-                Email = retorno.Email,
-                Senha = retorno.Senha
-            };
+            return _mapper.Map<Pessoa, PessoaCadastrarDTO>(pessoa);            
         }
 
-        public async Task<bool> AtualizarPessoa(CadastrarPessoaDTO pessoaAtualizar, int id)
+        public async Task<bool> Atualizar(PessoaAtualizarDTO pessoaAtualizar, int id)
         {
             if (pessoaAtualizar == null)
                 throw new ArgumentNullException(nameof(pessoaAtualizar));
 
-            var retornaAtualizarPessoa = await _context.Pessoas.FindAsync(id);
+            var pessoaExistente = await _context.Pessoas
+                .FirstOrDefaultAsync(a => a.Id == id);
 
-            if (retornaAtualizarPessoa == null)
-                throw new ArgumentNullException($"Não existe: {id}.");
+            if (pessoaExistente == null)
+                throw new ArgumentNullException($"Não existe: {pessoaExistente}.");
 
-            retornaAtualizarPessoa.Nome = pessoaAtualizar.Nome;
-            retornaAtualizarPessoa.Cpf = pessoaAtualizar.Cpf;
-            retornaAtualizarPessoa.Telefone = pessoaAtualizar.Telefone;
-            retornaAtualizarPessoa.Email = pessoaAtualizar.Email;
-            retornaAtualizarPessoa.Senha = pessoaAtualizar.Senha;
+            _mapper.Map(pessoaAtualizar,pessoaExistente);
                        
-            _context.Pessoas.Update(retornaAtualizarPessoa);
+            _context.Pessoas.Update(pessoaExistente);
 
             await _context.SaveChangesAsync();
 
             return true;
         }
       
-        public async Task<bool> RemovePessoa(int id)
+        public async Task<bool> Excluir(int id)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));

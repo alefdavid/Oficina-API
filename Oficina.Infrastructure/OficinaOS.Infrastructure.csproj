@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Oficina.Application\OficinaOS.Application.csproj" />
     <ProjectReference Include="..\Oficina.Domain\OficinaOS.Domain.csproj" />
   </ItemGroup>
 
