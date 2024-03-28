@@ -1,6 +1,6 @@
 ﻿namespace OficinaOS.Domain.Entities
 {
-    public class Peca : BaseEntity
+    public class Peca : Entity
     {
         public string Descricao { get; set; }
         public int Quantidade { get; set; }

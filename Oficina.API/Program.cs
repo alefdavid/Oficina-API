@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using OficinaOS.Domain.Interfaces.Repositories;
 using OficinaOS.Infrastructure.Context;
 using OficinaOS.Infrastructure.Profiles;
 using OficinaOS.Infrastructure.Repositories;
-using System.Reflection;
+using OficinaOS.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +19,7 @@ builder.Services.AddSwaggerGen(opt =>
         Contact = new OpenApiContact
         {
             Name = "Alef David",
-            Url = new Uri("https://www.linkedin.com/in/alefdavid/")          
+            Url = new Uri("https://www.linkedin.com/in/alefdavid/")
         }
     });
 });
@@ -29,9 +28,11 @@ builder.Services.AddSwaggerGen(opt =>
 var connectionString = builder.Configuration.GetConnectionString("BDAccompanyCar");
 builder.Services.AddDbContext<OficinaDbContext>(options => options.UseSqlServer(connectionString));
 
-//DependencyInjection
-builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
-builder.Services.AddScoped<IPecaRepository, PecaRepository>();
+//Dependencies
+builder.Services.RegisterApplicationDependencies();
+builder.Services.RegisterInfrastrutureDependencies();
+
+
 
 //Mapping
 builder.Services.AddSingleton(AutoMapperConfig.Initialize());

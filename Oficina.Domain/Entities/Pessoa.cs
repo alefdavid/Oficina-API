@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OficinaOS.Domain.Entities
 {
-    public class Pessoa : BaseEntity
+    public class Pessoa : Entity
     {
         public string Nome { get; set; }
         public string Cpf { get; set; }

@@ -4,21 +4,21 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OficinaOS.API.Responses;
 using OficinaOS.Domain.DTO;
 using OficinaOS.Domain.Entities;
-using OficinaOS.Domain.Interfaces.Repositories;
+using OficinaOS.Domain.Interfaces.Services;
 
 namespace OficinaOS.API.Controllers
 {
     [ApiController]
     public class PessoaController : MainController
     {
-        private readonly IPessoaRepository _pessoaRepository;
+        private readonly IPessoaService _pessoaService;
 
         private readonly IMapper _mapper;
 
-        public PessoaController(IPessoaRepository pessoaRepository,
+        public PessoaController(IPessoaService pessoaService,
                                 IMapper mapper)
         {
-            _pessoaRepository = pessoaRepository;
+            _pessoaService = pessoaService;
             _mapper = mapper;
         }
 
@@ -31,7 +31,7 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pessoaRepository.BuscarPorId(id);
+                var retorno = await _pessoaService.BuscarPorId(id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -55,14 +55,12 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pessoaRepository.Listar();
+                var retorno = await _pessoaService.Listar();
 
-                if (retorno == null || !retorno.Any())
+                if (retorno == null)
                     return NotFoundResponse();
-
-                var pessoaDto = retorno.Select(p => _mapper.Map<Pessoa, PessoaDTO>(p));
-
-                return Ok(pessoaDto);
+              
+                return Ok(retorno);
             }
             catch (Exception ex)
             {
@@ -94,7 +92,7 @@ namespace OficinaOS.API.Controllers
 
                 var pessoaCadastrarDto = _mapper.Map<PessoaCadastrarDTO>(pessoaCadastrar);
 
-                var retorno = await _pessoaRepository.Cadastrar(pessoaCadastrarDto);
+                var retorno = await _pessoaService.Cadastrar(pessoaCadastrarDto);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -120,14 +118,14 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var buscaPessoa = await _pessoaRepository.BuscarPorId(id);
+                var buscaPessoa = await _pessoaService.BuscarPorId(id);
 
                 if (buscaPessoa == null)
                     return NotFoundResponse();
 
                 var pessoaAtualizarDto = _mapper.Map<PessoaAtualizarDTO>(pessoaAtualizar);
 
-                var retorno = await _pessoaRepository.Atualizar(pessoaAtualizarDto, id);
+                var retorno = await _pessoaService.Atualizar(pessoaAtualizarDto, id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -153,7 +151,7 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pessoaRepository.Excluir(id);
+                var retorno = await _pessoaService.Excluir(id);
 
                 if (retorno == null)
                     return NotFoundResponse();

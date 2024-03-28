@@ -11,6 +11,9 @@ namespace OficinaOS.Infrastructure.Profiles
         {       
             CreateMap<Peca, PecaDTO>();
             CreateMap<PecaDTO, Peca>();
+            CreateMap<PecaCadastrarDTO, Peca>();
+            CreateMap<Peca, PecaCadastrarDTO>();
+            CreateMap<PecaAtualizarDTO, Peca>();
         }
     }
 }

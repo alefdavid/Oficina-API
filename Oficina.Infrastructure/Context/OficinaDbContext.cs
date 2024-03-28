@@ -15,9 +15,7 @@ namespace OficinaOS.Infrastructure.Context
 {
     public class OficinaDbContext : DbContext
     {
-        public OficinaDbContext()
-        {
-        }
+        public OficinaDbContext() { }
 
         public OficinaDbContext(DbContextOptions<OficinaDbContext> options) : base(options) { }
 

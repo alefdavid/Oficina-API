@@ -1,8 +1,7 @@
 ﻿namespace OficinaOS.Domain.DTO
 {
-    public class PecaDTO
+    public class PecaCadastrarDTO
     {
-        public int Id { get; set; }
         public string Descricao { get; set; }
         public int Quantidade { get; set; }
         public string Marca { get; set; }

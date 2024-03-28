@@ -4,18 +4,19 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OficinaOS.API.Responses;
 using OficinaOS.Domain.DTO;
 using OficinaOS.Domain.Interfaces.Repositories;
+using OficinaOS.Domain.Interfaces.Services;
 
 namespace OficinaOS.API.Controllers
 {
     [ApiController]
     public class PecaController : MainController
     {
-        private readonly IPecaRepository _pecaRepository;
+        private readonly IPecaService _pecaService;
 
         private readonly IMapper _mapper;
-        public PecaController(IPecaRepository pecaRepository, IMapper mapper)
+        public PecaController(IPecaService pecaService, IMapper mapper)
         {
-            _pecaRepository = pecaRepository;
+            _pecaService = pecaService;
             _mapper = mapper;
         }
 
@@ -28,7 +29,7 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pecaRepository.BuscarPorId(id);
+                var retorno = await _pecaService.BuscarPorId(id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -52,7 +53,7 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pecaRepository.Listar();
+                var retorno = await _pecaService.Listar();
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -69,11 +70,11 @@ namespace OficinaOS.API.Controllers
 
         [HttpPost("/api/cadastrar/peca/")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PecaDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PecaCadastrarDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> CadastrarPeca([FromBody] PecaDTO pecaDTO)
+        public async Task<IActionResult> CadastrarPeca([FromBody] PecaCadastrarDTO pecaCadastrarDTO)
         {
             try
             {
@@ -87,9 +88,9 @@ namespace OficinaOS.API.Controllers
                     return BadResponse(lista);
                 }
 
-                var pecaCadastrar = _mapper.Map<PecaDTO>(pecaDTO);
+                var pecaCadastrar = _mapper.Map<PecaCadastrarDTO>(pecaCadastrarDTO);
 
-                var retorno = await _pecaRepository.Cadastrar(pecaCadastrar);
+                var retorno = await _pecaService.Cadastrar(pecaCadastrar);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -107,22 +108,22 @@ namespace OficinaOS.API.Controllers
 
         [HttpPut("/api/atualizar/peca/{id}")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PecaDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PecaAtualizarDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> AtualizarPeca([FromBody] PecaDTO pecaDTO, int id)
+        public async Task<IActionResult> AtualizarPeca([FromBody] PecaAtualizarDTO pecaAtualizarDTO, int id)
         {
             try
             {
-                var retornoBuscarId = await _pecaRepository.BuscarPorId(id);
+                var retornoBuscarId = await _pecaService.BuscarPorId(id);
 
                 if (retornoBuscarId == null)
                     return NotFoundResponse();
 
-                var pecaAtualizar = _mapper.Map<PecaDTO>(pecaDTO);
+                var pecaAtualizar = _mapper.Map<PecaAtualizarDTO>(pecaAtualizarDTO);
 
-                var retorno = await _pecaRepository.Atualizar(pecaAtualizar, id);
+                var retorno = await _pecaService.Atualizar(pecaAtualizar, id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -148,7 +149,7 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pecaRepository.Excluir(id);
+                var retorno = await _pecaService.Excluir(id);
 
                 if (retorno == null)
                     return NotFoundResponse();
