@@ -4,10 +4,10 @@ namespace OficinaOS.Domain.Interfaces.Services
 {
     public interface IPessoaService : IService
     {
-        Task<PessoaCadastrarDTO> Cadastrar(PessoaCadastrarDTO pessoaCadastrar);
-        Task<bool> Atualizar(PessoaAtualizarDTO pessoaAtualizar, int id);
-        Task<PessoaDTO> BuscarPorId(int id);
-        Task<List<PessoaDTO>> Listar();
-        Task<bool> Excluir(int id);
+        Task<PessoaCadastrarDTO> Post(PessoaCadastrarDTO pessoaCadastrar);
+        Task<bool> Put(PessoaAtualizarDTO pessoaAtualizar, int id);
+        Task<PessoaDTO> GetById(int id);
+        Task<List<PessoaDTO>> GetAll();
+        Task<bool> Delete(int id);
     }
 }

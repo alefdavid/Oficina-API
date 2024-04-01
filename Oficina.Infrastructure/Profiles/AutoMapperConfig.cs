@@ -15,6 +15,7 @@ namespace OficinaOS.Infrastructure.Profiles
             {
                 cfg.AddProfile(new PessoaProfile());
                 cfg.AddProfile(new PecaProfile());
+                cfg.AddProfile(new EmpresaProfile());
             });
 
             return config.CreateMapper();

@@ -21,12 +21,12 @@ namespace OficinaOS.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<PessoaDTO> BuscarPorId(int id)
+        public async Task<PessoaDTO> GetById(int id)
         {
             if (id == null)
                 throw new Exception();
 
-            var listarPessoas = await _repositoryManager.PessoaRepository.Listar();
+            var listarPessoas = await _repositoryManager.PessoaRepository.GetAll();
             var pessoa = listarPessoas.Where(x => x.Id == id).FirstOrDefault();
 
             var pessoaDTO = _mapper.Map<PessoaDTO>(pessoa);
@@ -34,33 +34,33 @@ namespace OficinaOS.Application.Services
             return pessoaDTO;
         }
 
-        public async Task<List<PessoaDTO>> Listar()
+        public async Task<List<PessoaDTO>> GetAll()
         {
-            var listarPessoas = await _repositoryManager.PessoaRepository.Listar();
+            var listarPessoas = await _repositoryManager.PessoaRepository.GetAll();
             var listarPessoasDTO = _mapper.Map<List<PessoaDTO>>(listarPessoas);
 
             return listarPessoasDTO;
         }
 
-        public async Task<PessoaCadastrarDTO> Cadastrar(PessoaCadastrarDTO pessoaCadastrar)
+        public async Task<PessoaCadastrarDTO> Post(PessoaCadastrarDTO pessoaCadastrar)
         {
             if (pessoaCadastrar == null)
                 throw new ArgumentNullException(nameof(pessoaCadastrar));
 
             var pessoa = _mapper.Map<PessoaCadastrarDTO, Pessoa>(pessoaCadastrar);
 
-            _repositoryManager.PessoaRepository.Adicionar(pessoa);
+            _repositoryManager.PessoaRepository.Add(pessoa);
             await _repositoryManager.Save();
 
             return _mapper.Map<Pessoa, PessoaCadastrarDTO>(pessoa);
         }
 
-        public async Task<bool> Atualizar(PessoaAtualizarDTO pessoaAtualizar, int id)
+        public async Task<bool> Put(PessoaAtualizarDTO pessoaAtualizar, int id)
         {
             if (pessoaAtualizar == null)
                 throw new ArgumentNullException(nameof(pessoaAtualizar));
 
-            var pessoa = await _repositoryManager.PessoaRepository.Listar();
+            var pessoa = await _repositoryManager.PessoaRepository.GetAll();
             var pessoaExistente = pessoa.Where(x => x.Id == id).FirstOrDefault();
 
             if (pessoaExistente == null)
@@ -68,25 +68,25 @@ namespace OficinaOS.Application.Services
 
             _mapper.Map(pessoaAtualizar, pessoaExistente);
 
-            _repositoryManager.PessoaRepository.Atualizar(pessoaExistente);
+            _repositoryManager.PessoaRepository.Put(pessoaExistente);
 
             await _repositoryManager.Save();
 
             return true;
         }
 
-        public async Task<bool> Excluir(int id)
+        public async Task<bool> Delete(int id)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
 
-            var pessoa = await _repositoryManager.PessoaRepository.Listar();
+            var pessoa = await _repositoryManager.PessoaRepository.GetAll();
             var retornaRemoverPessoa = pessoa.Where(x => x.Id == id).FirstOrDefault();
 
             if (retornaRemoverPessoa == null)
                 throw new ArgumentNullException($"Não existe: {id}.");
 
-            await _repositoryManager.PessoaRepository.Excluir(retornaRemoverPessoa.Id);
+            await _repositoryManager.PessoaRepository.Delete(retornaRemoverPessoa.Id);
 
             await _repositoryManager.Save();
 

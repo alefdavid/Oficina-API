@@ -20,12 +20,12 @@ namespace OficinaOS.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<PecaDTO> BuscarPorId(int id)
+        public async Task<PecaDTO> GetById(int id)
         {
             if (id == null)
                 throw new Exception();
 
-            var listarPeca = await _repositoryManager.PecaRepository.Listar();
+            var listarPeca = await _repositoryManager.PecaRepository.GetAll();
             var peca = listarPeca.Where(x => x.Id == id).FirstOrDefault();
 
             var pessoaDTO = _mapper.Map<PecaDTO>(peca);
@@ -33,33 +33,33 @@ namespace OficinaOS.Application.Services
             return pessoaDTO;
         }
 
-        public async Task<List<PecaDTO>> Listar()
+        public async Task<List<PecaDTO>> GetAll()
         {
-            var listarPeca = await _repositoryManager.PecaRepository.Listar();
+            var listarPeca = await _repositoryManager.PecaRepository.GetAll();
             var listarPecaDTO = _mapper.Map<List<PecaDTO>>(listarPeca);
 
             return listarPecaDTO;
         }
 
-        public async Task<PecaCadastrarDTO> Cadastrar(PecaCadastrarDTO pecaCadastrar)
+        public async Task<PecaCadastrarDTO> Post(PecaCadastrarDTO pecaCadastrar)
         {
             if (pecaCadastrar == null)
                 throw new ArgumentNullException(nameof(pecaCadastrar));
 
             var peca = _mapper.Map<PecaCadastrarDTO, Peca>(pecaCadastrar);
 
-            _repositoryManager.PecaRepository.Adicionar(peca);
+            _repositoryManager.PecaRepository.Add(peca);
             await _repositoryManager.Save();
 
             return _mapper.Map<Peca, PecaCadastrarDTO>(peca);
         }
 
-        public async Task<bool> Atualizar(PecaAtualizarDTO pecaAtualizar, int id)
+        public async Task<bool> Put(PecaAtualizarDTO pecaAtualizar, int id)
         {
             if (pecaAtualizar == null)
                 throw new ArgumentNullException(nameof(pecaAtualizar));
 
-            var listarPeca = await _repositoryManager.PecaRepository.Listar();
+            var listarPeca = await _repositoryManager.PecaRepository.GetAll();
             var pecaExistente = listarPeca.Where(x => x.Id == id).FirstOrDefault();
 
             if (pecaExistente == null)
@@ -67,25 +67,25 @@ namespace OficinaOS.Application.Services
 
             _mapper.Map(pecaAtualizar, pecaExistente);
 
-            _repositoryManager.PecaRepository.Atualizar(pecaExistente);
+            _repositoryManager.PecaRepository.Put(pecaExistente);
 
             await _repositoryManager.Save();
 
             return true;
         }
 
-        public async Task<bool> Excluir(int id)
+        public async Task<bool> Delete(int id)
         {
             if (id == null)
                 throw new ArgumentNullException(nameof(id));
 
-            var listarPeca = await _repositoryManager.PecaRepository.Listar();
+            var listarPeca = await _repositoryManager.PecaRepository.GetAll();
             var retornaRemoverPeca = listarPeca.Where(x => x.Id == id).FirstOrDefault();
 
             if (retornaRemoverPeca == null)
                 throw new ArgumentNullException($"Não existe: {id}.");
 
-            await _repositoryManager.PecaRepository.Excluir(retornaRemoverPeca.Id);
+            await _repositoryManager.PecaRepository.Delete(retornaRemoverPeca.Id);
 
             await _repositoryManager.Save();
 

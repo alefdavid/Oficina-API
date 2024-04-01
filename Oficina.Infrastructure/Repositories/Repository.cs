@@ -14,22 +14,22 @@ namespace OficinaOS.Infrastructure.Repositories
         {
             _context = context;
         }
-        public void Adicionar(T entity)
+        public void Add(T entity)
         {
             _context.Set<T>().Add(entity);
         }
 
-        public void Atualizar(T entity)
+        public void Put(T entity)
         {
             _context.Set<T>().Update(entity);
         }
 
-        public async Task<T> BuscarPorId(int id)
+        public async Task<T> GetById(int id)
         {
             return await _context.Set<T>().Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> Excluir(int id)
+        public async Task<bool> Delete(int id)
         {
             var entity = await _context.Set<T>().FindAsync(id);
 
@@ -41,7 +41,7 @@ namespace OficinaOS.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<List<T>> Listar()
+        public async Task<List<T>> GetAll()
         {
             return await _context.Set<T>().ToListAsync();
         }

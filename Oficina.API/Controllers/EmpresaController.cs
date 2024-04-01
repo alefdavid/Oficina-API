@@ -3,33 +3,36 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OficinaOS.API.Responses;
 using OficinaOS.Domain.DTO;
-using OficinaOS.Domain.Interfaces.Repositories;
+using OficinaOS.Domain.Entities;
 using OficinaOS.Domain.Interfaces.Services;
 
 namespace OficinaOS.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PecaController : MainController
+    public class EmpresaController : MainController
     {
-        private readonly IPecaService _pecaService;
+        private readonly IEmpresaService _empresaService;
 
         private readonly IMapper _mapper;
-        public PecaController(IPecaService pecaService, IMapper mapper)
+
+        public EmpresaController(IEmpresaService empresaService,
+                                IMapper mapper)
         {
-            _pecaService = pecaService;
+            _empresaService = empresaService;
             _mapper = mapper;
         }
-        [HttpGet("{id}")]
+
+        [HttpGet("{cnpj}")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PecaDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(EmpresaDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetByCnpj(string cnpj)
         {
             try
             {
-                var retorno = await _pecaService.GetById(id);
+                var retorno = await _empresaService.GetByCnpj(cnpj);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -46,18 +49,18 @@ namespace OficinaOS.API.Controllers
 
         [HttpGet]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PecaDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(EmpresaDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var retorno = await _pecaService.GetAll();
+                var retorno = await _empresaService.GetAll();
 
                 if (retorno == null)
                     return NotFoundResponse();
-
+              
                 return Ok(retorno);
             }
             catch (Exception ex)
@@ -70,11 +73,11 @@ namespace OficinaOS.API.Controllers
 
         [HttpPost]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PecaCadastrarDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(EmpresaCadastrarDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> Post([FromBody] PecaCadastrarDTO pecaCadastrarDTO)
+        public async Task<IActionResult> Post([FromBody] EmpresaCadastrarDTO empresaCadastrar)
         {
             try
             {
@@ -88,9 +91,9 @@ namespace OficinaOS.API.Controllers
                     return BadResponse(lista);
                 }
 
-                var pecaCadastrar = _mapper.Map<PecaCadastrarDTO>(pecaCadastrarDTO);
+                var empresaCadastrarDto = _mapper.Map<EmpresaCadastrarDTO>(empresaCadastrar);
 
-                var retorno = await _pecaService.Post(pecaCadastrar);
+                var retorno = await _empresaService.Post(empresaCadastrarDto);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -108,22 +111,22 @@ namespace OficinaOS.API.Controllers
 
         [HttpPut("{id}")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PecaAtualizarDTO))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(EmpresaDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> Put([FromBody] PecaAtualizarDTO pecaAtualizarDTO, int id)
+        public async Task<IActionResult> Put(EmpresaAtualizarDTO empresaAtualizar, int id)
         {
             try
             {
-                var retornoBuscarId = await _pecaService.GetById(id);
+                var buscaEmpresa = await _empresaService.GetById(id);
 
-                if (retornoBuscarId == null)
+                if (buscaEmpresa == null)
                     return NotFoundResponse();
 
-                var pecaAtualizar = _mapper.Map<PecaAtualizarDTO>(pecaAtualizarDTO);
+                var empresaAtualizarDto = _mapper.Map<EmpresaAtualizarDTO>(empresaAtualizar);
 
-                var retorno = await _pecaService.Put(pecaAtualizar, id);
+                var retorno = await _empresaService.Put(empresaAtualizarDto, id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -149,7 +152,7 @@ namespace OficinaOS.API.Controllers
         {
             try
             {
-                var retorno = await _pecaService.Delete(id);
+                var retorno = await _empresaService.Delete(id);
 
                 if (retorno == null)
                     return NotFoundResponse();

@@ -11,6 +11,7 @@ namespace OficinaOS.Application
         {
             services.AddTransient<IPessoaService, PessoaService>();
             services.AddTransient<IPecaService, PecaService>();
+            services.AddTransient<IEmpresaService, EmpresaService>();
 
             return services;
         }

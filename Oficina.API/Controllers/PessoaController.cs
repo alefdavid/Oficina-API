@@ -8,6 +8,7 @@ using OficinaOS.Domain.Interfaces.Services;
 
 namespace OficinaOS.API.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
     public class PessoaController : MainController
     {
@@ -22,16 +23,16 @@ namespace OficinaOS.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("/api/buscar/pessoa/{id}")]
+        [HttpGet("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PessoaDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
-        public async Task<IActionResult> BuscarPessoaId(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             try
             {
-                var retorno = await _pessoaService.BuscarPorId(id);
+                var retorno = await _pessoaService.GetById(id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -46,16 +47,16 @@ namespace OficinaOS.API.Controllers
             }
         }
 
-        [HttpGet("/api/listar/pessoa")]
+        [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PessoaDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
-        public async Task<IActionResult> ListarPessoa()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var retorno = await _pessoaService.Listar();
+                var retorno = await _pessoaService.GetAll();
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -70,13 +71,13 @@ namespace OficinaOS.API.Controllers
             }
         }
 
-        [HttpPost("/api/cadastrar/pessoa/")]
+        [HttpPost]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PessoaCadastrarDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> CadastrarPessoa([FromBody] PessoaCadastrarDTO pessoaCadastrar)
+        public async Task<IActionResult> Post([FromBody] PessoaCadastrarDTO pessoaCadastrar)
         {
             try
             {
@@ -92,7 +93,7 @@ namespace OficinaOS.API.Controllers
 
                 var pessoaCadastrarDto = _mapper.Map<PessoaCadastrarDTO>(pessoaCadastrar);
 
-                var retorno = await _pessoaService.Cadastrar(pessoaCadastrarDto);
+                var retorno = await _pessoaService.Post(pessoaCadastrarDto);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -108,24 +109,24 @@ namespace OficinaOS.API.Controllers
             }
         }
 
-        [HttpPut("/api/atualizar/pessoa/{id}")]
+        [HttpPut("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PessoaAtualizarDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> AtualizarPessoa(PessoaAtualizarDTO pessoaAtualizar, int id)
+        public async Task<IActionResult> Put(PessoaAtualizarDTO pessoaAtualizar, int id)
         {
             try
             {
-                var buscaPessoa = await _pessoaService.BuscarPorId(id);
+                var buscaPessoa = await _pessoaService.GetById(id);
 
                 if (buscaPessoa == null)
                     return NotFoundResponse();
 
                 var pessoaAtualizarDto = _mapper.Map<PessoaAtualizarDTO>(pessoaAtualizar);
 
-                var retorno = await _pessoaService.Atualizar(pessoaAtualizarDto, id);
+                var retorno = await _pessoaService.Put(pessoaAtualizarDto, id);
 
                 if (retorno == null)
                     return NotFoundResponse();
@@ -141,17 +142,17 @@ namespace OficinaOS.API.Controllers
             }
         }
 
-        [HttpDelete("/api/deletar/pessoa/{id}")]
+        [HttpDelete("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundResponse))]
 
-        public async Task<IActionResult> DeletarPessoa(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var retorno = await _pessoaService.Excluir(id);
+                var retorno = await _pessoaService.Delete(id);
 
                 if (retorno == null)
                     return NotFoundResponse();

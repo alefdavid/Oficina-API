@@ -10,9 +10,10 @@ namespace OficinaOS.Infrastructure.Repositories
         {
 
             // Repositories
+            services.AddScoped<IRepositoryManager, RepositoryManager>();
             services.AddScoped<IPessoaRepository, PessoaRepository>();
             services.AddScoped<IPecaRepository, PecaRepository>();
-            services.AddScoped<IRepositoryManager, RepositoryManager>();
+            services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 
             return services;
         }

@@ -12,13 +12,16 @@ namespace OficinaOS.Infrastructure
 
         public IPessoaRepository PessoaRepository { get; }
         public IPecaRepository PecaRepository { get; }
+        public IEmpresaRepository EmpresaRepository { get; }
         public RepositoryManager(OficinaDbContext oficinaDbContext,
                                 IPessoaRepository pessoaRepository,
-                                IPecaRepository pecaRepository)
+                                IPecaRepository pecaRepository,
+                                IEmpresaRepository empresaRepository)
         {
             this.oficinaDbContext = oficinaDbContext;
             PessoaRepository = pessoaRepository;
             PecaRepository = pecaRepository;
+            EmpresaRepository = empresaRepository;
         }
 
         public async Task Save()
@@ -35,6 +38,7 @@ namespace OficinaOS.Infrastructure
                     oficinaDbContext.Dispose();
                     PessoaRepository.Dispose();
                     PecaRepository.Dispose();
+                    EmpresaRepository.Dispose();
                 }
                 descartado = true;
             }

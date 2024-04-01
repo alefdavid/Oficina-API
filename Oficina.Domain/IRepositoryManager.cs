@@ -11,6 +11,7 @@ namespace OficinaOS.Domain
     {
         IPessoaRepository PessoaRepository { get; }
         IPecaRepository PecaRepository { get; }
+        IEmpresaRepository EmpresaRepository { get; }
         Task Save();
     }
 }

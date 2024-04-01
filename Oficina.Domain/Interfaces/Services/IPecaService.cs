@@ -10,10 +10,10 @@ namespace OficinaOS.Domain.Interfaces.Services
 {
     public interface IPecaService : IService
     {
-        Task<PecaCadastrarDTO> Cadastrar(PecaCadastrarDTO pecaCadastrar);
-        Task<bool> Atualizar(PecaAtualizarDTO pecaAtualizar, int id);
-        Task<PecaDTO> BuscarPorId(int id);
-        Task<List<PecaDTO>> Listar();
-        Task<bool> Excluir(int id);
+        Task<PecaCadastrarDTO> Post(PecaCadastrarDTO pecaCadastrar);
+        Task<bool> Put(PecaAtualizarDTO pecaAtualizar, int id);
+        Task<PecaDTO> GetById(int id);
+        Task<List<PecaDTO>> GetAll();
+        Task<bool> Delete(int id);
     }
 }
